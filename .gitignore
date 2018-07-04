@@ -5,6 +5,9 @@
 *.so
 *.dylib
 
+# Bot binary
+Gopher
+
 # Test binary, build with `go test -c`
 *.test
 
