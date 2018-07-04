@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
-	_ "github.com/joho/godotenv/autoload"
+	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 
 	"github.com/thecodeah/Gopher/src/commands"
@@ -26,6 +26,8 @@ type Configuration struct {
 var Config Configuration
 
 func main() {
+	godotenv.Load("token.env", "config.env")
+
 	err := envconfig.Process("config", &Config)
 	if err != nil {
 		log.Fatal(err.Error())

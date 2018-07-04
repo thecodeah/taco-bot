@@ -5,9 +5,6 @@
 *.so
 *.dylib
 
-# Ignore environment variable files
-*.env
-
 # Bot binary
 Gopher
 
