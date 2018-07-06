@@ -28,7 +28,7 @@ var Config Configuration
 func main() {
 	godotenv.Load("token.env", "config.env")
 
-	err := envconfig.Process("config", &Config)
+	err := envconfig.Process("GOPHER", &Config)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
