@@ -14,11 +14,11 @@ type Configuration struct {
 	Prefix string `default:"!"`
 }
 
-// Bot contains information that's neccesary for the bot.
+// Bot contains information that's necessary for the bot.
 type Bot struct {
-	config     Configuration
-	session    *discordgo.Session
-	CommandMap commands.CommandMap
+	config         Configuration
+	session        *discordgo.Session
+	commandHandler *commands.CommandHandler
 }
 
 // New initializes the bot as well as all commands.
@@ -37,9 +37,10 @@ func New(config Configuration) (bot *Bot, err error) {
 		return
 	}
 
-	bot.CommandMap = make(commands.CommandMap)
+	bot.commandHandler = commands.New()
 	bot.registerCommands()
-	bot.session.AddHandler(bot.commandHandler)
+
+	bot.session.AddHandler(bot.messageCreate)
 
 	return
 }
@@ -49,7 +50,7 @@ func (bot Bot) Close() {
 	bot.session.Close()
 }
 
-func (bot Bot) commandHandler(session *discordgo.Session, message *discordgo.MessageCreate) {
+func (bot Bot) messageCreate(session *discordgo.Session, message *discordgo.MessageCreate) {
 	if message.Author.ID == session.State.User.ID {
 		return
 	}
@@ -66,7 +67,7 @@ func (bot Bot) commandHandler(session *discordgo.Session, message *discordgo.Mes
 		commandInfo.Message = message
 		commandInfo.Args = arguments
 
-		cmdFunction, found := bot.CommandMap.Get(strings.TrimPrefix(cmdName, bot.config.Prefix))
+		cmdFunction, found := bot.commandHandler.Get(strings.TrimPrefix(cmdName, bot.config.Prefix))
 		if !found {
 			return
 		}
@@ -77,5 +78,5 @@ func (bot Bot) commandHandler(session *discordgo.Session, message *discordgo.Mes
 }
 
 func (bot Bot) registerCommands() {
-	bot.CommandMap.Register("ping", commands.PingCommand)
+	bot.commandHandler.Register("ping", commands.PingCommand)
 }

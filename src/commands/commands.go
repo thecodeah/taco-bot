@@ -15,13 +15,26 @@ type Command func(CommandInfo)
 // CommandMap stores all command functions by their name.
 type CommandMap map[string]Command
 
+// CommandHandler stores command information/state.
+type CommandHandler struct {
+	Commands CommandMap
+}
+
+// New creates a new command handler.
+func New() (ch *CommandHandler) {
+	ch = &CommandHandler{
+		Commands: make(CommandMap),
+	}
+	return
+}
+
 // Register registers a command to be handled by the command handler.
-func (cm CommandMap) Register(name string, command Command) {
-	cm[name] = command
+func (ch CommandHandler) Register(name string, command Command) {
+	ch.Commands[name] = command
 }
 
 // Get retrieves the Command (Data type) from the CommandMap map.
-func (cm CommandMap) Get(name string) (*Command, bool) {
-	command, found := cm[name]
+func (ch CommandHandler) Get(name string) (*Command, bool) {
+	command, found := ch.Commands[name]
 	return &command, found
 }
