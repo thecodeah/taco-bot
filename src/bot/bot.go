@@ -1,8 +1,6 @@
 package bot
 
 import (
-	"strings"
-
 	"github.com/bwmarrin/discordgo"
 	"github.com/thecodeah/Gopher/src/commands"
 )
@@ -37,7 +35,9 @@ func New(config Configuration) (bot *Bot, err error) {
 		return
 	}
 
-	bot.commandHandler = commands.New()
+	bot.commandHandler = commands.New(commands.Config{
+		Prefix: config.Prefix,
+	})
 	bot.registerCommands()
 
 	bot.session.AddHandler(bot.messageCreate)
@@ -51,30 +51,7 @@ func (bot Bot) Close() {
 }
 
 func (bot Bot) messageCreate(session *discordgo.Session, message *discordgo.MessageCreate) {
-	if message.Author.ID == session.State.User.ID {
-		return
-	}
-
-	if strings.HasPrefix(message.Content, bot.config.Prefix) {
-		arguments := strings.Fields(message.Content)
-		cmdName := arguments[0]
-
-		// Removing the command from the arguments slice
-		arguments = arguments[1:]
-
-		var commandInfo commands.CommandInfo
-		commandInfo.Session = session
-		commandInfo.Message = message
-		commandInfo.Args = arguments
-
-		cmdFunction, found := bot.commandHandler.Get(strings.TrimPrefix(cmdName, bot.config.Prefix))
-		if !found {
-			return
-		}
-
-		c := *cmdFunction
-		c(commandInfo)
-	}
+	bot.commandHandler.Process(session, message)
 }
 
 func (bot Bot) registerCommands() {
