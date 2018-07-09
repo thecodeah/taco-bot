@@ -1,6 +1,8 @@
 package bot
 
 import (
+	"time"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/thecodeah/Gopher/src/commands"
 )
@@ -8,8 +10,9 @@ import (
 // Configuration contains settings loaded in from environment
 // variable (.env) files.
 type Configuration struct {
-	Token  string `required:"true"`
-	Prefix string `default:"!"`
+	Token    string `required:"true"`
+	Prefix   string `default:"!"`
+	Cooldown int    `default:"3"`
 }
 
 // Bot contains information that's necessary for the bot.
@@ -36,7 +39,8 @@ func New(config Configuration) (bot *Bot, err error) {
 	}
 
 	bot.commandHandler = commands.New(commands.Config{
-		Prefix: config.Prefix,
+		Prefix:   config.Prefix,
+		Cooldown: time.Duration(config.Cooldown) * time.Second,
 	})
 	bot.registerCommands()
 
