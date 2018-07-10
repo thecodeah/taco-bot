@@ -8,8 +8,8 @@
 # Bot binary
 Gopher
 
-# Ignore token environment variable file
-token.env
+# Ignore credentials environment variable file
+credentials.env
 
 # Test binary, build with `go test -c`
 *.test

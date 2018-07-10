@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	godotenv.Load("token.env", "config.env")
+	godotenv.Load("credentials.env", "config.env")
 
 	var config bot.Configuration
 	err := envconfig.Process("GOPHER", &config)
