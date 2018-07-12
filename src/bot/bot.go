@@ -52,18 +52,21 @@ func New(config Configuration) (bot *Bot, err error) {
 		return
 	}
 
+	bot.session.AddHandler(bot.onReady)
+
 	err = bot.session.Open()
 	if err != nil {
 		return
 	}
 
-	bot.commandHandler = commands.New(commands.Config{
+	bot.commandHandler = commands.New(bot.database, commands.Config{
 		Prefix:   config.Prefix,
 		Cooldown: time.Duration(config.Cooldown) * time.Second,
 	})
 	bot.registerCommands()
 
-	bot.session.AddHandler(bot.messageCreate)
+	bot.session.AddHandler(bot.onMessageCreate)
+	bot.session.AddHandler(bot.onUserJoin)
 
 	return
 }
@@ -73,10 +76,21 @@ func (bot Bot) Close() {
 	bot.session.Close()
 }
 
-func (bot Bot) messageCreate(session *discordgo.Session, message *discordgo.MessageCreate) {
-	bot.commandHandler.Process(session, message)
-}
-
 func (bot Bot) registerCommands() {
 	bot.commandHandler.Register("ping", commands.PingCommand)
+}
+
+func (bot Bot) onReady(session *discordgo.Session, info *discordgo.Ready) {
+	err := bot.database.EnsureUsers(bot.session)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (bot Bot) onUserJoin(session *discordgo.Session, info *discordgo.GuildMemberAdd) {
+	bot.database.EnsureUser(info.User.ID, info.GuildID)
+}
+
+func (bot Bot) onMessageCreate(session *discordgo.Session, info *discordgo.MessageCreate) {
+	bot.commandHandler.Process(session, info)
 }

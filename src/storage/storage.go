@@ -8,6 +8,7 @@ import (
 type Database struct {
 	session *mgo.Session
 	users   *mgo.Collection
+	config  Config
 }
 
 // Config stores configuration for the database.
@@ -25,6 +26,8 @@ func Connect(config Config) (*Database, error) {
 		err      error
 		database Database
 	)
+
+	database.config = config
 
 	database.session, err = mgo.Dial(config.Host + ":" + config.Port)
 	if err != nil {

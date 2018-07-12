@@ -4,14 +4,17 @@ import (
 	"strings"
 	"time"
 
+	"github.com/thecodeah/Gopher/src/storage"
+
 	"github.com/bwmarrin/discordgo"
 )
 
 // CommandInfo stores information about the message sent by the player.
 type CommandInfo struct {
-	Session *discordgo.Session
-	Message *discordgo.MessageCreate
-	Args    []string
+	CommandHandler *CommandHandler
+	Session        *discordgo.Session
+	Message        *discordgo.MessageCreate
+	Args           []string
 }
 
 // Command is a function that requires CommandInfo as its argument.
@@ -25,6 +28,7 @@ type Cooldowns map[string]time.Time
 
 // CommandHandler stores command information/state.
 type CommandHandler struct {
+	Database  *storage.Database
 	commands  CommandMap
 	config    Config
 	cooldowns Cooldowns
@@ -37,11 +41,12 @@ type Config struct {
 }
 
 // New creates a new command handler.
-func New(config Config) (ch *CommandHandler) {
+func New(database *storage.Database, config Config) (ch *CommandHandler) {
 	ch = &CommandHandler{
 		commands:  make(CommandMap),
 		cooldowns: make(Cooldowns),
 		config:    config,
+		Database:  database,
 	}
 	return
 }
@@ -70,10 +75,12 @@ func (ch CommandHandler) Process(session *discordgo.Session, message *discordgo.
 		// Removing the command from the arguments slice
 		arguments = arguments[1:]
 
-		var commandInfo CommandInfo
-		commandInfo.Session = session
-		commandInfo.Message = message
-		commandInfo.Args = arguments
+		commandInfo := CommandInfo{
+			CommandHandler: &ch,
+			Session:        session,
+			Message:        message,
+			Args:           arguments,
+		}
 
 		cmdFunction, found := ch.Get(cmdName)
 		if !found {
