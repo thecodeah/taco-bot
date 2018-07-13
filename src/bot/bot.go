@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/thecodeah/Gopher/src/commands"
-	"github.com/thecodeah/Gopher/src/storage"
+	"github.com/thecodeah/gopher-bot/src/commands"
+	"github.com/thecodeah/gopher-bot/src/storage"
 )
 
 // Configuration contains settings loaded in from environment

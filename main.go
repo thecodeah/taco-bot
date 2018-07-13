@@ -9,7 +9,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 
-	"github.com/thecodeah/Gopher/src/bot"
+	"github.com/thecodeah/gopher-bot/src/bot"
 )
 
 func main() {
