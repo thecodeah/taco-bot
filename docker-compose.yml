@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  gopher-bot:
+    image: thecodeah/gopher-bot
+    depends_on: mongodb
+    environment:
+      GOPHER_TOKEN: ${GOPHER_TOKEN}
+
+  mongodb:
+    image: mongo
