@@ -5,6 +5,7 @@ services:
     image: thecodeah/gopher-bot
     depends_on: [mongodb]
     environment:
+      GOPHER_MONGO_HOST: mongodb
       GOPHER_TOKEN: ${GOPHER_TOKEN}
 
   mongodb:
