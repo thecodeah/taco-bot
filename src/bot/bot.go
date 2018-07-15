@@ -77,8 +77,12 @@ func (bot Bot) Close() {
 }
 
 func (bot Bot) registerCommands() {
-	bot.commandHandler.Register("ping", commands.PingCommand)
+	// Economy
 	bot.commandHandler.Register("balance", commands.BalanceCommand)
+	bot.commandHandler.Register("pay", commands.PayCommand)
+
+	// Misc
+	bot.commandHandler.Register("ping", commands.PingCommand)
 }
 
 func (bot Bot) onReady(session *discordgo.Session, info *discordgo.Ready) {

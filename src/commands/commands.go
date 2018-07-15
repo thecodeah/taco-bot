@@ -13,6 +13,7 @@ import (
 type CommandInfo struct {
 	CommandHandler *CommandHandler
 	Session        *discordgo.Session
+	Guild          *discordgo.Guild
 	Message        *discordgo.MessageCreate
 	Args           []string
 }
@@ -75,9 +76,20 @@ func (ch CommandHandler) Process(session *discordgo.Session, message *discordgo.
 		// Removing the command from the arguments slice
 		arguments = arguments[1:]
 
+		// Get the guild in which the message was sent
+		channel, err := session.Channel(message.ChannelID)
+		if err != nil {
+			return
+		}
+		guild, err := session.Guild(channel.GuildID)
+		if err != nil {
+			return
+		}
+
 		commandInfo := CommandInfo{
 			CommandHandler: &ch,
 			Session:        session,
+			Guild:          guild,
 			Message:        message,
 			Args:           arguments,
 		}

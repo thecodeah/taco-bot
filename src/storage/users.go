@@ -95,3 +95,10 @@ func (db Database) GetUser(userid, guildid string) (User, error) {
 
 	return result, nil
 }
+
+// UpdateUser TODO
+func (db Database) UpdateUser(user User) (err error) {
+	collection := db.session.DB(db.config.Name).C("users")
+	err = collection.Update(bson.M{"id": user.ID}, user)
+	return
+}
