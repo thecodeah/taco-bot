@@ -16,7 +16,7 @@ func main() {
 	godotenv.Load("credentials.env", "config.env")
 
 	var config bot.Configuration
-	err := envconfig.Process("GOPHER", &config)
+	err := envconfig.Process("TACOBOT", &config)
 	if err != nil {
 		panic(err)
 	}

@@ -6,7 +6,7 @@
 *.dylib
 
 # Bot binary
-Gopher
+taco-bot
 
 # Ignore credentials environment variable file
 credentials.env

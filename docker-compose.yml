@@ -1,12 +1,12 @@
 version: '3'
 
 services:
-  gopher-bot:
-    image: thecodeah/gopher-bot
+  taco-bot:
+    image: thecodeah/taco-bot
     depends_on: [mongodb]
     environment:
-      GOPHER_MONGO_HOST: mongodb
-      GOPHER_TOKEN: ${GOPHER_TOKEN}
+      TACOBOT_MONGO_HOST: mongodb
+      TACOBOT_TOKEN: ${TACOBOT_TOKEN}
 
   mongodb:
     image: mongo

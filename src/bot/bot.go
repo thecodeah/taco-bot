@@ -18,7 +18,7 @@ type Configuration struct {
 
 	MongoHost string `split_words:"true" default:"127.0.0.1" required:"true"`
 	MongoPort string `split_words:"true" default:"27017" required:"true"`
-	MongoName string `split_words:"true" default:"gopher" required:"true"`
+	MongoName string `split_words:"true" default:"tacobot" required:"true"`
 	MongoUser string `split_words:"true" required:"false"`
 	MongoPass string `split_words:"true" required:"false"`
 }
