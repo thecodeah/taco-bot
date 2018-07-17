@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/thecodeah/gopher-bot/src/storage"
+	"github.com/thecodeah/taco-bot/src/storage"
 
 	"github.com/bwmarrin/discordgo"
 )

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/thecodeah/gopher-bot/src/commands"
-	"github.com/thecodeah/gopher-bot/src/storage"
+	"github.com/thecodeah/taco-bot/src/commands"
+	"github.com/thecodeah/taco-bot/src/storage"
 )
 
 // Configuration contains settings loaded in from environment
