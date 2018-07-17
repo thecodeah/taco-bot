@@ -9,7 +9,7 @@ import (
 func PayCommand(commandInfo CommandInfo) {
 	if len(commandInfo.Args) != 2 {
 		commandInfo.Session.ChannelMessageSend(commandInfo.Message.ChannelID,
-			fmt.Sprintf("%s Usage : !pay [mention] [amount]", commandInfo.Message.Author.Mention()),
+			fmt.Sprintf("%s Usage : %spay [mention] [amount]", commandInfo.Message.Author.Mention(), commandInfo.CommandHandler.config.Prefix),
 		)
 	} else {
 		database := commandInfo.CommandHandler.Database
@@ -46,7 +46,7 @@ func PayCommand(commandInfo CommandInfo) {
 		}
 
 		commandInfo.Session.ChannelMessageSend(commandInfo.Message.ChannelID,
-			fmt.Sprintf("%s Successfully transferred funds!", commandInfo.Message.Author.Mention()),
+			fmt.Sprintf("%s Successfully transferred tacos!", commandInfo.Message.Author.Mention()),
 		)
 	}
 }

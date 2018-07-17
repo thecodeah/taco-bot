@@ -70,8 +70,8 @@ func (ch CommandHandler) Process(session *discordgo.Session, message *discordgo.
 	}
 
 	if strings.HasPrefix(message.Content, ch.config.Prefix) {
-		arguments := strings.Fields(message.Content)
-		cmdName := strings.TrimPrefix(arguments[0], ch.config.Prefix)
+		arguments := strings.Fields(strings.TrimPrefix(message.Content, ch.config.Prefix))
+		cmdName := arguments[0]
 
 		// Removing the command from the arguments slice
 		arguments = arguments[1:]

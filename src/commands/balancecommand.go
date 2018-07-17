@@ -14,6 +14,6 @@ func BalanceCommand(commandInfo CommandInfo) {
 	}
 
 	commandInfo.Session.ChannelMessageSend(commandInfo.Message.ChannelID,
-		fmt.Sprintf("%s You have %d shells :shell:", commandInfo.Message.Author.Mention(), user.Balance),
+		fmt.Sprintf("%s You have %d tacos :taco:", commandInfo.Message.Author.Mention(), user.Balance),
 	)
 }
