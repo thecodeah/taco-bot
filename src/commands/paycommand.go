@@ -29,7 +29,7 @@ func PayCommand(commandInfo CommandInfo) {
 		}
 
 		// Perform checks
-		if amount <= 0 || sender.Balance < amount {
+		if amount <= 0 || sender.Balance < amount || commandInfo.Message.Mentions[0].ID == commandInfo.Message.Author.ID {
 			return
 		}
 

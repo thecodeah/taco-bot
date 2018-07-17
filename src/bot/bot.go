@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -88,7 +89,7 @@ func (bot Bot) registerCommands() {
 func (bot Bot) onReady(session *discordgo.Session, info *discordgo.Ready) {
 	err := bot.database.EnsureUsers(bot.session)
 	if err != nil {
-		panic(err)
+		fmt.Println("Error occured while ensuring users " + err.Error())
 	}
 }
 

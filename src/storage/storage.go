@@ -40,6 +40,14 @@ func Connect(config Config) (*Database, error) {
 			Username: config.User,
 			Password: config.Pass,
 		})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	database.users, err = database.ensureUsersCollection()
+	if err != nil {
+		return nil, err
 	}
 
 	return &database, nil
