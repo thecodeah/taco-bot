@@ -2,6 +2,8 @@ package commands
 
 import (
 	"fmt"
+
+	"github.com/dustin/go-humanize"
 )
 
 // BalanceCommand shows you your balance.
@@ -14,6 +16,6 @@ func BalanceCommand(commandInfo CommandInfo) {
 	}
 
 	commandInfo.Session.ChannelMessageSend(commandInfo.Message.ChannelID,
-		fmt.Sprintf("%s You have %d tacos :taco:", commandInfo.Message.Author.Mention(), user.Balance),
+		fmt.Sprintf("%s You have %s tacos :taco:", commandInfo.Message.Author.Mention(), humanize.Comma(int64(user.Balance))),
 	)
 }

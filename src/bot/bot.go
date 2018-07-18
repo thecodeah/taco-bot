@@ -81,6 +81,7 @@ func (bot Bot) registerCommands() {
 	// Economy
 	bot.commandHandler.Register("balance", commands.BalanceCommand)
 	bot.commandHandler.Register("pay", commands.PayCommand)
+	bot.commandHandler.Register("lord", commands.LordCommand)
 
 	// Misc
 	bot.commandHandler.Register("ping", commands.PingCommand)

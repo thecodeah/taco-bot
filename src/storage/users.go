@@ -103,6 +103,22 @@ func (db Database) GetUser(userid, guildid string) (User, error) {
 	return result, nil
 }
 
+// GetTopUser returns a user struct containing user data of the
+// user with the most tacos in the guild.
+func (db Database) GetTopUser(guildid string) (User, error) {
+	var (
+		result User
+		err    error
+	)
+
+	err = db.users.Find(bson.M{"guildid": guildid}).Sort("-balance").Limit(1).One(&result)
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
 // UpdateUser updates a user's account data.
 func (db Database) UpdateUser(user User) (err error) {
 	err = db.users.Update(bson.M{"guildid": user.GuildID, "userid": user.UserID}, user)
