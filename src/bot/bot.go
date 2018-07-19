@@ -103,9 +103,9 @@ func (bot Bot) onUserJoin(session *discordgo.Session, info *discordgo.GuildMembe
 func (bot Bot) onMessageCreate(session *discordgo.Session, info *discordgo.MessageCreate) {
 	bot.commandHandler.Process(session, info)
 
-	// Give out taco (1/1000 chance)
+	// Give out taco (1/100 chance)
 	rand.Seed(time.Now().UnixNano())
-	if random := rand.Intn(1000); random == 0 {
+	if random := rand.Intn(100); random == 0 {
 		// Get guild
 		channel, err := session.Channel(info.ChannelID)
 		if err != nil {
