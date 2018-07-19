@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/pkg/errors"
 	"github.com/thecodeah/taco-bot/src/commands"
 	"github.com/thecodeah/taco-bot/src/storage"
 )
@@ -46,19 +47,19 @@ func New(config Configuration) (bot *Bot, err error) {
 		Pass: config.MongoPass,
 	})
 	if err != nil {
-		return
+		return nil, errors.Wrap(err, "Failed to connect to MongoDB datatabase.")
 	}
 
 	bot.session, err = discordgo.New("Bot " + config.Token)
 	if err != nil {
-		return
+		return nil, errors.Wrap(err, "Failed to create new Discord session")
 	}
 
 	bot.session.AddHandler(bot.onReady)
 
 	err = bot.session.Open()
 	if err != nil {
-		return
+		return nil, errors.Wrap(err, "Failed to create a websocket connection to Discord")
 	}
 
 	bot.commandHandler = commands.New(bot.database, commands.Config{
@@ -91,7 +92,7 @@ func (bot Bot) registerCommands() {
 func (bot Bot) onReady(session *discordgo.Session, info *discordgo.Ready) {
 	err := bot.database.EnsureUsers(bot.session)
 	if err != nil {
-		fmt.Println("Error occured while ensuring users " + err.Error())
+		fmt.Println(errors.Wrap(err, "Error occured while ensuring users").Error())
 	}
 }
 

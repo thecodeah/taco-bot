@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"github.com/pkg/errors"
 	"gopkg.in/mgo.v2"
 )
 
@@ -31,7 +32,7 @@ func Connect(config Config) (*Database, error) {
 
 	database.session, err = mgo.Dial(config.Host + ":" + config.Port)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "Failed to dial : %s:%s", config.Host, config.Port)
 	}
 
 	if config.Pass != "" {
@@ -41,7 +42,7 @@ func Connect(config Config) (*Database, error) {
 			Password: config.Pass,
 		})
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "Failed to login.")
 		}
 	}
 
