@@ -2,6 +2,7 @@ package bot
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -78,7 +79,7 @@ func (bot Bot) Close() {
 }
 
 func (bot Bot) registerCommands() {
-	// Economy
+	// User commands
 	bot.commandHandler.Register("balance", commands.BalanceCommand)
 	bot.commandHandler.Register("pay", commands.PayCommand)
 	bot.commandHandler.Register("lord", commands.LordCommand)
@@ -100,4 +101,22 @@ func (bot Bot) onUserJoin(session *discordgo.Session, info *discordgo.GuildMembe
 
 func (bot Bot) onMessageCreate(session *discordgo.Session, info *discordgo.MessageCreate) {
 	bot.commandHandler.Process(session, info)
+
+	// Give out taco (1/1000 chance)
+	rand.Seed(time.Now().UnixNano())
+	if random := rand.Intn(1000); random == 0 {
+		// Get guild
+		channel, err := session.Channel(info.ChannelID)
+		if err != nil {
+			return
+		}
+		guild, err := session.Guild(channel.GuildID)
+		if err != nil {
+			return
+		}
+
+		user, err := bot.database.GetUser(info.Author.ID, guild.ID)
+		user.Balance++
+		bot.database.UpdateUser(user)
+	}
 }
