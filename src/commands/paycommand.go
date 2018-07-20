@@ -6,30 +6,30 @@ import (
 )
 
 // PayCommand allows you to transfer funds to another user.
-func PayCommand(commandInfo CommandInfo) {
-	if len(commandInfo.Args) != 2 {
-		commandInfo.Session.ChannelMessageSend(commandInfo.Message.ChannelID,
-			fmt.Sprintf("%s Usage : %spay [mention] [amount]", commandInfo.Message.Author.Mention(), commandInfo.CommandHandler.config.Prefix),
+func PayCommand(commandMessage CommandMessage) {
+	if len(commandMessage.Args) != 2 {
+		commandMessage.Session.ChannelMessageSend(commandMessage.Message.ChannelID,
+			fmt.Sprintf("%s Usage : %spay [mention] [amount]", commandMessage.Message.Author.Mention(), commandMessage.CommandHandler.config.Prefix),
 		)
 	} else {
-		database := commandInfo.CommandHandler.Database
-		amount, err := strconv.Atoi(commandInfo.Args[1])
+		database := commandMessage.CommandHandler.Database
+		amount, err := strconv.Atoi(commandMessage.Args[1])
 		if err != nil {
 			return
 		}
 
 		// Get user data
-		sender, err := database.GetUser(commandInfo.Message.Author.ID, commandInfo.Guild.ID)
+		sender, err := database.GetUser(commandMessage.Message.Author.ID, commandMessage.Guild.ID)
 		if err != nil {
 			return
 		}
-		receiver, err := database.GetUser(commandInfo.Message.Mentions[0].ID, commandInfo.Guild.ID)
+		receiver, err := database.GetUser(commandMessage.Message.Mentions[0].ID, commandMessage.Guild.ID)
 		if err != nil {
 			return
 		}
 
 		// Perform checks
-		if amount <= 0 || sender.Balance < amount || commandInfo.Message.Mentions[0].ID == commandInfo.Message.Author.ID {
+		if amount <= 0 || sender.Balance < amount || commandMessage.Message.Mentions[0].ID == commandMessage.Message.Author.ID {
 			return
 		}
 
@@ -45,8 +45,8 @@ func PayCommand(commandInfo CommandInfo) {
 			return
 		}
 
-		commandInfo.Session.ChannelMessageSend(commandInfo.Message.ChannelID,
-			fmt.Sprintf("%s Successfully transferred tacos!", commandInfo.Message.Author.Mention()),
+		commandMessage.Session.ChannelMessageSend(commandMessage.Message.ChannelID,
+			fmt.Sprintf("%s Successfully transferred tacos!", commandMessage.Message.Author.Mention()),
 		)
 	}
 }

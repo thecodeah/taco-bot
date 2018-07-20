@@ -9,8 +9,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// CommandInfo stores information about the message sent by the player.
-type CommandInfo struct {
+// CommandMessage stores information about the message sent by the player.
+type CommandMessage struct {
 	CommandHandler *CommandHandler
 	Session        *discordgo.Session
 	Guild          *discordgo.Guild
@@ -18,11 +18,18 @@ type CommandInfo struct {
 	Args           []string
 }
 
-// Command is a function that requires CommandInfo as its argument.
-type Command func(CommandInfo)
+// CommandInfo stores information about a command.
+type CommandInfo struct {
+	Function    Command
+	Description string
+	Hidden      bool
+}
+
+// Command is a function that requires CommandMessage as its argument.
+type Command func(CommandMessage)
 
 // CommandMap stores all command functions by their name.
-type CommandMap map[string]Command
+type CommandMap map[string]CommandInfo
 
 // Cooldowns stores when commands have been used last.
 type Cooldowns map[string]time.Time
@@ -53,14 +60,14 @@ func New(database *storage.Database, config Config) (ch *CommandHandler) {
 }
 
 // Register registers a command to be handled by the command handler.
-func (ch CommandHandler) Register(name string, command Command) {
-	ch.commands[name] = command
+func (ch CommandHandler) Register(name string, commandInfo CommandInfo) {
+	ch.commands[name] = commandInfo
 }
 
 // Get retrieves the Command (Data type) from the CommandMap map.
-func (ch CommandHandler) Get(name string) (*Command, bool) {
-	command, found := ch.commands[name]
-	return &command, found
+func (ch CommandHandler) Get(name string) (*CommandInfo, bool) {
+	commandInfo, found := ch.commands[name]
+	return &commandInfo, found
 }
 
 // Process processes incoming messages and calls the command's function.
@@ -86,7 +93,7 @@ func (ch CommandHandler) Process(session *discordgo.Session, message *discordgo.
 			return
 		}
 
-		commandInfo := CommandInfo{
+		commandMessage := CommandMessage{
 			CommandHandler: &ch,
 			Session:        session,
 			Guild:          guild,
@@ -94,10 +101,11 @@ func (ch CommandHandler) Process(session *discordgo.Session, message *discordgo.
 			Args:           arguments,
 		}
 
-		cmdFunction, found := ch.Get(cmdName)
+		commandInfo, found := ch.Get(cmdName)
 		if !found {
 			return
 		}
+		cmdFunction := commandInfo.Function
 
 		// Check if the command is on cooldown
 		if lastCooldown, ok := ch.cooldowns[cmdName]; ok {
@@ -111,7 +119,6 @@ func (ch CommandHandler) Process(session *discordgo.Session, message *discordgo.
 		}
 
 		// Call the command's function
-		c := *cmdFunction
-		c(commandInfo)
+		cmdFunction(commandMessage)
 	}
 }

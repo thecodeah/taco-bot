@@ -80,13 +80,31 @@ func (bot Bot) Close() {
 }
 
 func (bot Bot) registerCommands() {
-	// User commands
-	bot.commandHandler.Register("balance", commands.BalanceCommand)
-	bot.commandHandler.Register("pay", commands.PayCommand)
-	bot.commandHandler.Register("lord", commands.LordCommand)
+	bot.commandHandler.Register("balance", commands.CommandInfo{
+		Description: "Shows you how many tacos you have.",
+		Function:    commands.BalanceCommand,
+	})
 
-	// Misc
-	bot.commandHandler.Register("ping", commands.PingCommand)
+	bot.commandHandler.Register("pay", commands.CommandInfo{
+		Description: "Allows you to transfer funds to another user.",
+		Function:    commands.PayCommand,
+	})
+
+	bot.commandHandler.Register("lord", commands.CommandInfo{
+		Description: "Shows you the name of the richest of em' all!",
+		Function:    commands.LordCommand,
+	})
+
+	bot.commandHandler.Register("ping", commands.CommandInfo{
+		Description: "Send you back a 'Pong!' message!",
+		Function:    commands.PingCommand,
+		Hidden:      true,
+	})
+
+	bot.commandHandler.Register("help", commands.CommandInfo{
+		Description: "Shows you all available commands.",
+		Function:    commands.HelpCommand,
+	})
 }
 
 func (bot Bot) onReady(session *discordgo.Session, info *discordgo.Ready) {
