@@ -45,30 +45,6 @@ func (db Database) EnsureUser(guildid, userid string) (user User, err error) {
 	return user, nil
 }
 
-// EnsureUsers calls EnsureUser on all players in all guilds.
-// func (db Database) EnsureUsers(session *discordgo.Session) error {
-// 	userGuilds, err := session.UserGuilds(100, "", "")
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	for _, guild := range userGuilds {
-// 		members, err := session.GuildMembers(guild.ID, "", 1000)
-// 		if err != nil {
-// 			return err
-// 		}
-
-// 		for _, member := range members {
-// 			err = db.EnsureUser(member.User.ID, guild.ID)
-// 			if err != nil {
-// 				return err
-// 			}
-// 		}
-// 	}
-
-// 	return nil
-// }
-
 // CreateUser creates the user in the database.
 func (db Database) CreateUser(userInfo User) (err error) {
 	err = db.users.Insert(&userInfo)
