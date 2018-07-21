@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"github.com/bwmarrin/discordgo"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -25,52 +24,54 @@ func (db Database) ensureUsersCollection() (collection *mgo.Collection, err erro
 
 // EnsureUser checks if the user exists in the database, if not it
 // will create the user in the database.
-func (db Database) EnsureUser(userid, guildid string) error {
+func (db Database) EnsureUser(guildid, userid string) (user User, err error) {
 	inDatabase, err := db.IsUserInDatabase(userid, guildid)
 	if err != nil {
-		return err
+		return
 	}
 
 	if !inDatabase {
-		err = db.CreateUser(User{
+		user = User{
 			GuildID: guildid,
 			UserID:  userid,
-		})
+		}
+
+		err = db.CreateUser(user)
 		if err != nil {
-			return err
+			return
 		}
 	}
 
-	return nil
+	return user, nil
 }
 
 // EnsureUsers calls EnsureUser on all players in all guilds.
-func (db Database) EnsureUsers(session *discordgo.Session) error {
-	userGuilds, err := session.UserGuilds(100, "", "")
-	if err != nil {
-		return err
-	}
+// func (db Database) EnsureUsers(session *discordgo.Session) error {
+// 	userGuilds, err := session.UserGuilds(100, "", "")
+// 	if err != nil {
+// 		return err
+// 	}
 
-	for _, guild := range userGuilds {
-		members, err := session.GuildMembers(guild.ID, "", 1000)
-		if err != nil {
-			return err
-		}
+// 	for _, guild := range userGuilds {
+// 		members, err := session.GuildMembers(guild.ID, "", 1000)
+// 		if err != nil {
+// 			return err
+// 		}
 
-		for _, member := range members {
-			err = db.EnsureUser(member.User.ID, guild.ID)
-			if err != nil {
-				return err
-			}
-		}
-	}
+// 		for _, member := range members {
+// 			err = db.EnsureUser(member.User.ID, guild.ID)
+// 			if err != nil {
+// 				return err
+// 			}
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 // CreateUser creates the user in the database.
-func (db Database) CreateUser(user User) (err error) {
-	err = db.users.Insert(&user)
+func (db Database) CreateUser(userInfo User) (err error) {
+	err = db.users.Insert(&userInfo)
 	return
 }
 
@@ -89,18 +90,17 @@ func (db Database) IsUserInDatabase(userid, guildid string) (bool, error) {
 }
 
 // GetUser returns a user struct containing user data.
-func (db Database) GetUser(userid, guildid string) (User, error) {
-	var (
-		result User
-		err    error
-	)
-
-	err = db.users.Find(bson.M{"guildid": guildid, "userid": userid}).One(&result)
+func (db Database) GetUser(userid, guildid string) (user User, err error) {
+	err = db.users.Find(bson.M{"guildid": guildid, "userid": userid}).One(&user)
 	if err != nil {
-		return result, err
+		// Ensure the user if something goes wrong.
+		user, err := db.EnsureUser(guildid, userid)
+		if err != nil {
+			return user, err
+		}
 	}
 
-	return result, nil
+	return user, nil
 }
 
 // GetTopUser returns a user struct containing user data of the

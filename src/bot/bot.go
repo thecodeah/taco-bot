@@ -1,7 +1,6 @@
 package bot
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -55,8 +54,6 @@ func New(config Configuration) (bot *Bot, err error) {
 		return nil, errors.Wrap(err, "Failed to create new Discord session")
 	}
 
-	bot.session.AddHandler(bot.onReady)
-
 	err = bot.session.Open()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to create a websocket connection to Discord")
@@ -69,7 +66,6 @@ func New(config Configuration) (bot *Bot, err error) {
 	bot.registerCommands()
 
 	bot.session.AddHandler(bot.onMessageCreate)
-	bot.session.AddHandler(bot.onUserJoin)
 
 	return
 }
@@ -105,17 +101,6 @@ func (bot Bot) registerCommands() {
 		Description: "Shows you all available commands.",
 		Function:    commands.HelpCommand,
 	})
-}
-
-func (bot Bot) onReady(session *discordgo.Session, info *discordgo.Ready) {
-	err := bot.database.EnsureUsers(bot.session)
-	if err != nil {
-		fmt.Println(errors.Wrap(err, "Error occured while ensuring users").Error())
-	}
-}
-
-func (bot Bot) onUserJoin(session *discordgo.Session, info *discordgo.GuildMemberAdd) {
-	bot.database.EnsureUser(info.User.ID, info.GuildID)
 }
 
 func (bot Bot) onMessageCreate(session *discordgo.Session, info *discordgo.MessageCreate) {
