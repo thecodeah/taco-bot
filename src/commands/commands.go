@@ -23,6 +23,7 @@ type CommandInfo struct {
 	Function    Command
 	Description string
 	Hidden      bool
+	Cooldown    map[*discordgo.Guild]time.Time
 }
 
 // Command is a function that requires CommandMessage as its argument.
@@ -31,15 +32,11 @@ type Command func(CommandMessage)
 // CommandMap stores all command functions by their name.
 type CommandMap map[string]CommandInfo
 
-// Cooldowns stores when commands have been used last.
-type Cooldowns map[string]time.Time
-
 // CommandHandler stores command information/state.
 type CommandHandler struct {
-	Database  *storage.Database
-	commands  CommandMap
-	config    Config
-	cooldowns Cooldowns
+	Database *storage.Database
+	commands CommandMap
+	config   Config
 }
 
 // Config stores command handler configurations.
@@ -51,16 +48,16 @@ type Config struct {
 // New creates a new command handler.
 func New(database *storage.Database, config Config) (ch *CommandHandler) {
 	ch = &CommandHandler{
-		commands:  make(CommandMap),
-		cooldowns: make(Cooldowns),
-		config:    config,
-		Database:  database,
+		commands: make(CommandMap),
+		config:   config,
+		Database: database,
 	}
 	return
 }
 
 // Register registers a command to be handled by the command handler.
 func (ch CommandHandler) Register(name string, commandInfo CommandInfo) {
+	commandInfo.Cooldown = make(map[*discordgo.Guild]time.Time)
 	ch.commands[name] = commandInfo
 }
 
@@ -108,14 +105,14 @@ func (ch CommandHandler) Process(session *discordgo.Session, message *discordgo.
 		cmdFunction := commandInfo.Function
 
 		// Check if the command is on cooldown
-		if lastCooldown, ok := ch.cooldowns[cmdName]; ok {
+		if lastCooldown, ok := commandInfo.Cooldown[guild]; ok {
 			if time.Since(lastCooldown) < ch.config.Cooldown {
 				return
 			}
 		}
 
 		if ch.config.Cooldown > 0 {
-			ch.cooldowns[cmdName] = time.Now()
+			commandInfo.Cooldown[guild] = time.Now()
 		}
 
 		// Call the command's function
