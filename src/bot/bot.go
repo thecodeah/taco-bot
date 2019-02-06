@@ -123,7 +123,7 @@ func (bot Bot) onMessageCreate(session *discordgo.Session, info *discordgo.Messa
 		if guild.Balance < 10 {
 			chance = 10
 		} else if guild.Balance > 1000 {
-			guild.Balance = 1000
+			chance = 1000
 		} else {
 			chance = guild.Balance
 		}
