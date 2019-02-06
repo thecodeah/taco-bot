@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dustin/go-humanize"
+	"github.com/dustin/go-humanize/english"
 )
 
 // LordCommand replies with the username of the player with the most
@@ -28,10 +29,11 @@ func LordCommand(commandMessage CommandMessage) {
 		}
 
 		commandMessage.Session.ChannelMessageSend(commandMessage.Message.ChannelID,
-			fmt.Sprintf("%s The lord of the tacos is **%s**! (%s tacos)",
+			fmt.Sprintf("%s The lord of the tacos is **%s**! (%s %s)",
 				commandMessage.Message.Author.Mention(),
 				displayName,
 				humanize.Comma(int64(user.Balance)),
+				english.PluralWord(user.Balance, "taco", "tacos"),
 			),
 		)
 	} else {
