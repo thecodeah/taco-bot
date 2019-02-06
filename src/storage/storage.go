@@ -9,6 +9,7 @@ import (
 type Database struct {
 	session *mgo.Session
 	users   *mgo.Collection
+	guilds  *mgo.Collection
 	config  Config
 }
 
@@ -47,6 +48,11 @@ func Connect(config Config) (*Database, error) {
 	}
 
 	database.users, err = database.ensureUsersCollection()
+	if err != nil {
+		return nil, err
+	}
+
+	database.guilds, err = database.ensureGuildsCollection()
 	if err != nil {
 		return nil, err
 	}

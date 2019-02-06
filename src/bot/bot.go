@@ -104,23 +104,40 @@ func (bot Bot) registerCommands() {
 }
 
 func (bot Bot) onMessageCreate(session *discordgo.Session, info *discordgo.MessageCreate) {
-	bot.commandHandler.Process(session, info)
+	if !info.Author.Bot {
+		bot.commandHandler.Process(session, info)
 
-	// Give out taco (1/100 chance)
-	rand.Seed(time.Now().UnixNano())
-	if random := rand.Intn(100); random == 0 {
-		// Get guild
+		// Get the channel the message was sent in, then retrieve the
+		// guild's info from the database
 		channel, err := session.Channel(info.ChannelID)
 		if err != nil {
 			return
 		}
-		guild, err := session.Guild(channel.GuildID)
+		guild, err := bot.database.GetGuild(channel.GuildID)
 		if err != nil {
 			return
 		}
 
-		user, err := bot.database.GetUser(info.Author.ID, guild.ID)
-		user.Balance++
-		bot.database.UpdateUser(user)
+		// The chance at which you can receive a taco
+		var chance int
+		if guild.Balance < 10 {
+			chance = 10
+		} else if guild.Balance > 1000 {
+			guild.Balance = 1000
+		} else {
+			chance = guild.Balance
+		}
+
+		rand.Seed(time.Now().UnixNano())
+		if random := rand.Intn(chance); random == 0 {
+			user, err := bot.database.GetUser(info.Author.ID, channel.GuildID)
+			if err != nil {
+				return
+			}
+			user.Balance++
+			bot.database.UpdateUser(user)
+
+			bot.database.IncreaseGuildBalance(guild, 1)
+		}
 	}
 }

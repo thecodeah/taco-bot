@@ -5,7 +5,7 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
-// User stores information about the user.
+// User : stores information about the user.
 type User struct {
 	GuildID string `bson:"guildid"`
 	UserID  string `bson:"userid"`
