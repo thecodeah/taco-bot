@@ -7,6 +7,8 @@ services:
     environment:
       TACOBOT_MONGO_HOST: mongodb
       TACOBOT_TOKEN: ${TACOBOT_TOKEN}
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
 
   mongodb:
     image: mongo
