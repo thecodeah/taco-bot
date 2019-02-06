@@ -1,8 +1,8 @@
 package storage
 
 import (
+	"github.com/globalsign/mgo"
 	"github.com/pkg/errors"
-	"gopkg.in/mgo.v2"
 )
 
 // Database stores information about the database connection.
