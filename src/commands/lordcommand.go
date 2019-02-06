@@ -11,23 +11,34 @@ import (
 func LordCommand(commandMessage CommandMessage) {
 	database := commandMessage.CommandHandler.Database
 
-	user, err := database.GetTopUser(commandMessage.Guild.ID)
+	user, found, err := database.GetTopUser(commandMessage.Guild.ID)
 	if err != nil {
 		return
 	}
 
-	member, err := commandMessage.Session.GuildMember(commandMessage.Guild.ID, user.UserID)
+	if user.Balance > 0 && found {
+		member, err := commandMessage.Session.GuildMember(commandMessage.Guild.ID, user.UserID)
+		if err != nil {
+			return
+		}
 
-	displayName := member.Nick
-	if displayName == "" {
-		displayName = member.User.Username
+		displayName := member.Nick
+		if displayName == "" {
+			displayName = member.User.Username
+		}
+
+		commandMessage.Session.ChannelMessageSend(commandMessage.Message.ChannelID,
+			fmt.Sprintf("%s The lord of the tacos is **%s**! (%s tacos)",
+				commandMessage.Message.Author.Mention(),
+				displayName,
+				humanize.Comma(int64(user.Balance)),
+			),
+		)
+	} else {
+		commandMessage.Session.ChannelMessageSend(commandMessage.Message.ChannelID,
+			fmt.Sprintf("%s Hmmm... It looks like nobody has any tacos yet. Keep chatting!",
+				commandMessage.Message.Author.Mention(),
+			),
+		)
 	}
-
-	commandMessage.Session.ChannelMessageSend(commandMessage.Message.ChannelID,
-		fmt.Sprintf("%s The lord of the tacos is **%s**! (%s tacos)",
-			commandMessage.Message.Author.Mention(),
-			displayName,
-			humanize.Comma(int64(user.Balance)),
-		),
-	)
 }

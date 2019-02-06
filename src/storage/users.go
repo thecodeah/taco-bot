@@ -70,7 +70,7 @@ func (db Database) GetUser(userid, guildid string) (user User, err error) {
 	err = db.users.Find(bson.M{"guildid": guildid, "userid": userid}).One(&user)
 	if err != nil {
 		// Ensure the user if something goes wrong.
-		user, err := db.EnsureUser(guildid, userid)
+		user, err = db.EnsureUser(guildid, userid)
 		if err != nil {
 			return user, err
 		}
@@ -81,18 +81,24 @@ func (db Database) GetUser(userid, guildid string) (user User, err error) {
 
 // GetTopUser returns a user struct containing user data of the
 // user with the most tacos in the guild.
-func (db Database) GetTopUser(guildid string) (User, error) {
+// The second return value (bool) represents whether the user was
+// found or not.
+func (db Database) GetTopUser(guildid string) (User, bool, error) {
 	var (
-		result User
-		err    error
+		user User
+		err  error
 	)
 
-	err = db.users.Find(bson.M{"guildid": guildid}).Sort("-balance").Limit(1).One(&result)
+	err = db.users.Find(bson.M{"guildid": guildid}).Sort("-balance").Limit(1).One(&user)
 	if err != nil {
-		return result, err
+		if err == mgo.ErrNotFound {
+			return user, false, nil
+		}
+
+		return user, false, err
 	}
 
-	return result, nil
+	return user, true, nil
 }
 
 // UpdateUser updates a user's account data.
