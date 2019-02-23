@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -66,7 +67,7 @@ func New(config Configuration) (bot *Bot, err error) {
 	bot.registerCommands()
 
 	bot.session.AddHandler(bot.onMessageCreate)
-
+	bot.session.AddHandler(bot.onGuildCreate)
 	return
 }
 
@@ -101,6 +102,10 @@ func (bot Bot) registerCommands() {
 		Description: "Shows you all available commands.",
 		Function:    commands.HelpCommand,
 	})
+}
+
+func (bot Bot) onGuildCreate(session *discordgo.Session, info *discordgo.GuildCreate) {
+	bot.session.UpdateStatus(0, fmt.Sprintf("%d servers", len(bot.session.State.Guilds)))
 }
 
 func (bot Bot) onMessageCreate(session *discordgo.Session, info *discordgo.MessageCreate) {
