@@ -4,6 +4,7 @@ services:
   taco-bot:
     image: thecodeah/taco-bot
     depends_on: [mongodb]
+    restart: on-failure
     environment:
       TACOBOT_MONGO_HOST: mongodb
       TACOBOT_TOKEN: ${TACOBOT_TOKEN}
