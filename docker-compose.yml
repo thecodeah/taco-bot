@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   taco-bot:
@@ -12,4 +12,6 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   mongodb:
-    image: mongo
+    image: mongo:3.4
+    volumes:
+      - ${DATA_DIR}/tacobot/mongodb:/data/db
