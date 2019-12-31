@@ -8,11 +8,13 @@
 # Bot binary
 taco-bot
 
-# Ignore credentials environment variable file
-credentials.env
+# Ignore environment variable files
+*.env
 
 # Test binary, build with `go test -c`
 *.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+data/
