@@ -7,7 +7,7 @@ import (
 
 // PayCommand allows you to transfer funds to another user.
 func PayCommand(commandMessage CommandMessage) {
-	if len(commandMessage.Args) != 2 {
+	if len(commandMessage.Args) != 2 || len(commandMessage.Message.Mentions) == 0 {
 		commandMessage.Session.ChannelMessageSend(commandMessage.Message.ChannelID,
 			fmt.Sprintf("%s Usage : %spay [mention] [amount]", commandMessage.Message.Author.Mention(), commandMessage.CommandHandler.config.Prefix),
 		)
