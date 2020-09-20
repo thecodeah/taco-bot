@@ -1,17 +1,16 @@
 version: "3"
 
+# NOTE: In order to run this docker-compose setup, please use ./run.sh
+
 services:
   taco-bot:
-    image: thecodeah/taco-bot
-    depends_on: [mongodb]
+    build: .
     restart: on-failure
     environment:
       TACOBOT_MONGO_HOST: mongodb
       TACOBOT_TOKEN: ${TACOBOT_TOKEN}
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
+    depends_on: 
+      - mongodb
 
   mongodb:
     image: mongo:3.4
-    volumes:
-      - ${DATA_DIR}/tacobot/mongodb:/data/db

@@ -1,0 +1,8 @@
+version: "3"
+
+# NOTE: In order to run this docker-compose setup, please use ./run.sh
+
+services:
+  mongodb:
+    volumes:
+      - ${DATA_DIR}/tacobot/mongodb:/data/db
