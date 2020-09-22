@@ -61,6 +61,26 @@ var quotes = [...]Quote {
 		Message: "Taco big or taco home",
 		Author: "238335599767977985",
 	},
+	Quote{
+		Message: "I ate a taco and all I got was this lousy message",
+		Author: "669977652064550912",
+	},
+	Quote{
+		Message: "Taco to you later",
+		Author: "557123149674708994",
+	},
+	Quote{
+		Message: "One step farther from the taco throne.",
+		Author: "615838975931711489",
+	},
+	Quote{
+		Message: "OM NOM NOM",
+		Author: "298967832299831296",
+	},
+	Quote{
+		Message: "AAAH IT BURNS TOO SPICY!!",
+		Author: "404",
+	},
 }
 
 var gifs = [...]string {
