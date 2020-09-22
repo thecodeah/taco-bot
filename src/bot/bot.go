@@ -92,6 +92,11 @@ func (bot Bot) registerCommands() {
 		Function:    commands.LordCommand,
 	})
 
+	bot.commandHandler.Register("eat", commands.CommandInfo{
+		Description: "Eat a single taco in front of everyone.",
+		Function:    commands.EatCommand,
+	})
+
 	bot.commandHandler.Register("ping", commands.CommandInfo{
 		Description: "Send you back a 'Pong!' message!",
 		Function:    commands.PingCommand,
