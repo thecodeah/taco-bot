@@ -4,6 +4,7 @@ version: "3"
 
 services:
   taco-bot:
+    container_name: taco_bot
     build: .
     restart: on-failure
     environment:
@@ -13,4 +14,5 @@ services:
       - mongodb
 
   mongodb:
+    container_name: taco_bot_db
     image: mongo:3.4
